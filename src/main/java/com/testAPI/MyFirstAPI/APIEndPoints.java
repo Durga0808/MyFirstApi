@@ -34,9 +34,15 @@ public class APIEndPoints {
     @GetMapping("/getUserByID")
 
     public User findUserById(@RequestParam("UserId") Integer UserId){
-        User user=userDB.get(UserId);
+        if(userDB.containsKey(UserId)){
+            User user=userDB.get(UserId);
 
-        return user;
+            return user;
+        }else{
+            System.out.print("User not found");
+            return null;
+        }
+
     }
 
     @GetMapping("/getListOfPeople/{city}")
@@ -68,11 +74,19 @@ public class APIEndPoints {
 
     @DeleteMapping("/deleteUser/{name}")
     public String deleteUser(@PathVariable("name")String name){
+        System.out.print(name);
+//        userDB.entrySet().removeIf(entry -> userDB.containsValue(entry.getKey()));
+        List<Integer>keys=new ArrayList<>();
         for(int Key: userDB.keySet()){
             if(userDB.get(Key).getName().equals(name)){
-                userDB.remove(Key);
+                keys.add(Key);
             }
         }
+        for(int k:keys){
+            userDB.remove(k);
+            System.out.println ("userid "+k+" deleted");
+        }
+
         return "Users having name "+name+" is removed from DB";
     }
 }
